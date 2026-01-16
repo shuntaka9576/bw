@@ -43,6 +43,11 @@ pub fn execute(repo: &str, ssh: bool, https: bool, suffix: Option<String>) -> an
     // Run post_clone_commands in project directory
     run_post_clone_commands(&cfg.post_clone_commands, &project_dir)?;
 
+    // Create empty .envrc
+    let envrc_path = project_dir.join(".envrc");
+    fs::write(&envrc_path, "")?;
+    println!("Created .envrc");
+
     println!("\nDone! Repository cloned to: {}", project_dir.display());
 
     Ok(())
