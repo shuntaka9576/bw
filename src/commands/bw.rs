@@ -239,12 +239,52 @@ fn branch_exists(repo_root: &Path, branch: &str) -> bool {
         .unwrap_or(false)
 }
 
+fn has_any_commits(repo_root: &Path) -> bool {
+    Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .current_dir(repo_root)
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false)
+}
+
+fn add_orphan_worktree(
+    repo_root: &Path,
+    worktree_path: &Path,
+    branch_name: &str,
+) -> Result<(), GhbareError> {
+    let status = Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            "--orphan",
+            branch_name,
+            worktree_path.to_str().unwrap(),
+        ])
+        .current_dir(repo_root)
+        .status()
+        .map_err(|e| GhbareError::WorktreeError(e.to_string()))?;
+
+    if !status.success() {
+        return Err(GhbareError::WorktreeError(format!(
+            "git worktree add --orphan failed for branch '{}'",
+            branch_name
+        )));
+    }
+    Ok(())
+}
+
 fn add_worktree(
     repo_root: &Path,
     worktree_path: &Path,
     branch_name: &str,
     base_branch: &str,
 ) -> Result<(), GhbareError> {
+    // コミットがない場合は orphan worktree を作成
+    if !has_any_commits(repo_root) {
+        return add_orphan_worktree(repo_root, worktree_path, branch_name);
+    }
+
     let status = if branch_exists(repo_root, branch_name) {
         // 既存ブランチ: git worktree add <path> <branch>
         Command::new("git")
