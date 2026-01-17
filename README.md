@@ -26,12 +26,6 @@ Add a worktree
 bw add feature/new-feature
 ```
 
-List worktrees
-
-```bash
-bw list
-```
-
 Remove a worktree
 
 ```bash

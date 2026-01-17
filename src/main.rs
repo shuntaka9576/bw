@@ -59,8 +59,6 @@ enum Commands {
         #[arg(long, short = 'b')]
         base: Option<String>,
     },
-    /// List worktrees and select with fzf
-    List,
     /// Remove a worktree
     Rm {
         /// Worktree name (directory name)
@@ -101,9 +99,6 @@ fn run(cli: Cli) -> anyhow::Result<()> {
         }
         Commands::Add { branch, base } => {
             commands::bw::execute_add(branch.as_deref(), base)?;
-        }
-        Commands::List => {
-            commands::bw::execute_list()?;
         }
         Commands::Rm { name, force } => {
             commands::bw::execute_rm(&name, force)?;
