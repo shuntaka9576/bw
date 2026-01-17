@@ -7,6 +7,7 @@ use std::path::PathBuf;
 pub struct Config {
     pub root: String,
     #[serde(default = "default_clone_method")]
+    #[allow(dead_code)]
     pub clone_method: String,
     #[serde(default = "default_post_clone_commands")]
     pub post_clone_commands: String,
