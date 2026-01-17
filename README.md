@@ -35,7 +35,7 @@ bw list
 Remove a worktree
 
 ```bash
-bw remove feature-new-feature
+bw rm feature-new-feature
 ```
 
 ## Configuration
