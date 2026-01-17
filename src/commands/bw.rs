@@ -1,9 +1,8 @@
 use crate::error::GhbareError;
 use serde::Deserialize;
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 #[derive(Debug, Deserialize)]
 pub struct BwConfig {
@@ -66,58 +65,6 @@ pub fn execute_add(branch: Option<&str>, base_override: Option<String>) -> anyho
     }
 
     eprintln!("\nDone! Worktree created at: {}", worktree_path.display());
-
-    Ok(())
-}
-
-pub fn execute_list() -> anyhow::Result<()> {
-    let repo_root = find_repo_root()?;
-
-    let output = Command::new("git")
-        .args(["worktree", "list", "--porcelain"])
-        .current_dir(&repo_root)
-        .output()
-        .map_err(|e| GhbareError::WorktreeError(e.to_string()))?;
-
-    if !output.status.success() {
-        return Err(GhbareError::WorktreeError("git worktree list failed".to_string()).into());
-    }
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let worktrees: Vec<&str> = stdout
-        .lines()
-        .filter(|line| line.starts_with("worktree "))
-        .map(|line| line.strip_prefix("worktree ").unwrap_or(line))
-        .collect();
-
-    if worktrees.is_empty() {
-        eprintln!("No worktrees found");
-        return Ok(());
-    }
-
-    let mut fzf = Command::new("fzf")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
-        .spawn()
-        .map_err(|e| GhbareError::WorktreeError(format!("Failed to start fzf: {}", e)))?;
-
-    if let Some(mut stdin) = fzf.stdin.take() {
-        for wt in &worktrees {
-            writeln!(stdin, "{}", wt)?;
-        }
-    }
-
-    let output = fzf
-        .wait_with_output()
-        .map_err(|e| GhbareError::WorktreeError(format!("fzf error: {}", e)))?;
-
-    if output.status.success() {
-        let selected = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        if !selected.is_empty() {
-            println!("{}", selected);
-        }
-    }
 
     Ok(())
 }
