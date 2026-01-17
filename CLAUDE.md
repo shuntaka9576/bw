@@ -32,11 +32,11 @@ cargo fmt
 
 ### モジュール構成
 
-- `src/main.rs` - CLIエントリポイント。clap によるサブコマンド定義（`get`, `config`, `add`, `list`, `remove`）
+- `src/main.rs` - CLIエントリポイント。clap によるサブコマンド定義（`get`, `config`, `add`, `list`, `rm`）
 - `src/commands/` - サブコマンドの実装
   - `get.rs` - リポジトリのクローン処理。URL解析→bare clone→post_clone_commands実行
   - `config.rs` - 設定ファイルをエディタで開く
-  - `bw.rs` - worktree管理（add/list/remove）
+  - `bw.rs` - worktree管理（add/list/rm）
 - `src/git/clone.rs` - git2クレートを使用したbare clone実装。SSH/HTTPSの認証対応
 - `src/url/parser.rs` - リポジトリURL解析。SSH、HTTPS、短縮形式（github.com/user/repo）をサポート
 - `src/config/mod.rs` - TOML設定ファイル管理。`~/.config/ghqb/config.toml`
@@ -97,7 +97,7 @@ bw add main
 bw list
 
 # worktree削除
-bw remove feature-test
+bw rm feature-test
 ```
 
 ### 設定ファイル（bw.toml）

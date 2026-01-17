@@ -62,7 +62,7 @@ enum Commands {
     /// List worktrees and select with fzf
     List,
     /// Remove a worktree
-    Remove {
+    Rm {
         /// Worktree name (directory name)
         name: String,
 
@@ -105,8 +105,8 @@ fn run(cli: Cli) -> anyhow::Result<()> {
         Commands::List => {
             commands::bw::execute_list()?;
         }
-        Commands::Remove { name, force } => {
-            commands::bw::execute_remove(&name, force)?;
+        Commands::Rm { name, force } => {
+            commands::bw::execute_rm(&name, force)?;
         }
     }
 

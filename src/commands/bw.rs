@@ -122,7 +122,7 @@ pub fn execute_list() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn execute_remove(name: &str, force: bool) -> anyhow::Result<()> {
+pub fn execute_rm(name: &str, force: bool) -> anyhow::Result<()> {
     let repo_root = find_repo_root()?;
     let dirname = branch_to_dirname(name);
     let worktree_path = repo_root.join(&dirname);
