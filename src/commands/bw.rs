@@ -204,8 +204,9 @@ fn add_orphan_worktree(
         .args([
             "worktree",
             "add",
-            "--orphan",
+            "-b",
             branch_name,
+            "--orphan",
             worktree_path.to_str().unwrap(),
         ])
         .current_dir(repo_root)
